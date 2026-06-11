@@ -1,0 +1,23 @@
+spring:
+  application:
+    name: mcp-slack-server
+  ai:
+    mcp:
+      server:
+        name: slack-mcp-server
+        version: 1.0.0
+        type: SYNC
+        sse-message-endpoint: /mcp/message
+
+server:
+  port: 8085
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+
+logging:
+  level:
+    com.walmart.mcp.slack: DEBUG

@@ -1,0 +1,51 @@
+spring:
+  application:
+    name: incident-triaging-agent
+  ai:
+    anthropic:
+      api-key: ${ANTHROPIC_API_KEY}
+      chat:
+        options:
+          model: claude-sonnet-4-5
+          max-tokens: 8096
+          temperature: 0.1
+    mcp:
+      client:
+        sse:
+          connections:
+            mms-server:
+              url: http://localhost:8081
+            dynatrace-server:
+              url: http://localhost:8082
+            openobserve-server:
+              url: http://localhost:8083
+            kubernetes-server:
+              url: http://localhost:8084
+            slack-server:
+              url: http://localhost:8085
+            servicenow-server:
+              url: http://localhost:8086
+            pagerduty-server:
+              url: http://localhost:8087
+            infiniti-server:
+              url: http://localhost:8088
+            jira-server:
+              url: http://localhost:8089
+
+server:
+  port: 8080
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: always
+
+logging:
+  level:
+    com.walmart.incident: DEBUG
+    org.springframework.ai: INFO
+    org.springframework.ai.chat.client.advisor: DEBUG

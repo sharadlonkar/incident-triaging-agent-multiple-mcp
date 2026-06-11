@@ -1,0 +1,23 @@
+spring:
+  application:
+    name: mcp-pagerduty-server
+  ai:
+    mcp:
+      server:
+        name: pagerduty-mcp-server
+        version: 1.0.0
+        type: SYNC
+        sse-message-endpoint: /mcp/message
+
+server:
+  port: 8087
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+
+logging:
+  level:
+    com.walmart.mcp.pagerduty: DEBUG

@@ -1,0 +1,23 @@
+spring:
+  application:
+    name: mcp-infiniti-server
+  ai:
+    mcp:
+      server:
+        name: infiniti-mcp-server
+        version: 1.0.0
+        type: SYNC
+        sse-message-endpoint: /mcp/message
+
+server:
+  port: 8088
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+
+logging:
+  level:
+    com.walmart.mcp.infiniti: DEBUG

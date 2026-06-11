@@ -1,0 +1,23 @@
+spring:
+  application:
+    name: mcp-jira-server
+  ai:
+    mcp:
+      server:
+        name: jira-mcp-server
+        version: 1.0.0
+        type: SYNC
+        sse-message-endpoint: /mcp/message
+
+server:
+  port: 8089
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+
+logging:
+  level:
+    com.walmart.mcp.jira: DEBUG

@@ -1,0 +1,187 @@
+version: '3.8'
+
+services:
+
+  # ─── MCP Servers ──────────────────────────────────────────────────
+  mcp-mms-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        MODULE: mcp-mms-server
+    image: walmart/mcp-mms-server:latest
+    ports:
+      - "8081:8081"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8081/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  mcp-dynatrace-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        MODULE: mcp-dynatrace-server
+    image: walmart/mcp-dynatrace-server:latest
+    ports:
+      - "8082:8082"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8082/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  mcp-openobserve-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        MODULE: mcp-openobserve-server
+    image: walmart/mcp-openobserve-server:latest
+    ports:
+      - "8083:8083"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8083/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  mcp-kubernetes-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        MODULE: mcp-kubernetes-server
+    image: walmart/mcp-kubernetes-server:latest
+    ports:
+      - "8084:8084"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8084/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  mcp-slack-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        MODULE: mcp-slack-server
+    image: walmart/mcp-slack-server:latest
+    ports:
+      - "8085:8085"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8085/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  mcp-servicenow-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        MODULE: mcp-servicenow-server
+    image: walmart/mcp-servicenow-server:latest
+    ports:
+      - "8086:8086"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8086/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  mcp-pagerduty-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        MODULE: mcp-pagerduty-server
+    image: walmart/mcp-pagerduty-server:latest
+    ports:
+      - "8087:8087"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8087/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  mcp-infiniti-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        MODULE: mcp-infiniti-server
+    image: walmart/mcp-infiniti-server:latest
+    ports:
+      - "8088:8088"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8088/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  mcp-jira-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        MODULE: mcp-jira-server
+    image: walmart/mcp-jira-server:latest
+    ports:
+      - "8089:8089"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8089/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # ─── Main Incident Triaging Agent ─────────────────────────────────
+  incident-agent:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        MODULE: incident-agent
+    image: walmart/incident-agent:latest
+    ports:
+      - "8080:8080"
+    environment:
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
+      SPRING_AI_MCP_CLIENT_SSE_CONNECTIONS_MMS-SERVER_URL: http://mcp-mms-server:8081
+      SPRING_AI_MCP_CLIENT_SSE_CONNECTIONS_DYNATRACE-SERVER_URL: http://mcp-dynatrace-server:8082
+      SPRING_AI_MCP_CLIENT_SSE_CONNECTIONS_OPENOBSERVE-SERVER_URL: http://mcp-openobserve-server:8083
+      SPRING_AI_MCP_CLIENT_SSE_CONNECTIONS_KUBERNETES-SERVER_URL: http://mcp-kubernetes-server:8084
+      SPRING_AI_MCP_CLIENT_SSE_CONNECTIONS_SLACK-SERVER_URL: http://mcp-slack-server:8085
+      SPRING_AI_MCP_CLIENT_SSE_CONNECTIONS_SERVICENOW-SERVER_URL: http://mcp-servicenow-server:8086
+      SPRING_AI_MCP_CLIENT_SSE_CONNECTIONS_PAGERDUTY-SERVER_URL: http://mcp-pagerduty-server:8087
+      SPRING_AI_MCP_CLIENT_SSE_CONNECTIONS_INFINITI-SERVER_URL: http://mcp-infiniti-server:8088
+      SPRING_AI_MCP_CLIENT_SSE_CONNECTIONS_JIRA-SERVER_URL: http://mcp-jira-server:8089
+    depends_on:
+      mcp-mms-server:
+        condition: service_healthy
+      mcp-dynatrace-server:
+        condition: service_healthy
+      mcp-openobserve-server:
+        condition: service_healthy
+      mcp-kubernetes-server:
+        condition: service_healthy
+      mcp-slack-server:
+        condition: service_healthy
+      mcp-servicenow-server:
+        condition: service_healthy
+      mcp-pagerduty-server:
+        condition: service_healthy
+      mcp-infiniti-server:
+        condition: service_healthy
+      mcp-jira-server:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/api/v1/incident/health"]
+      interval: 30s
+      timeout: 15s
+      retries: 5

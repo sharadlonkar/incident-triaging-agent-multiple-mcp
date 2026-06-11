@@ -1,0 +1,23 @@
+spring:
+  application:
+    name: mcp-kubernetes-server
+  ai:
+    mcp:
+      server:
+        name: kubernetes-mcp-server
+        version: 1.0.0
+        type: SYNC
+        sse-message-endpoint: /mcp/message
+
+server:
+  port: 8084
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+
+logging:
+  level:
+    com.walmart.mcp.kubernetes: DEBUG
